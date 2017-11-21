@@ -5,6 +5,8 @@
 
 using namespace std;
 
+#define SCOUNT 10 // количество строк в массиве
+
 struct pupil {
 	char *name;
 	int age;
@@ -55,6 +57,29 @@ void searchpupil(pupil **p, int &count, const char *search)
 	*p = d; // присваеваем новый массив указателю
 	count = newcount; // и новое количество
 }
+// дать элементу массива указатель на строку
+void fillstr(char *str[SCOUNT], int &count, const char *fstr)
+{
+	str[count] = new char[strlen(fstr)];
+	strcpy(str[count], fstr);
+	count++;
+}
+// вывести на печать массив строк
+void printstr(char *str[SCOUNT], int count)
+{
+	for (int i = 0; i < count; ++i)
+		printf("%s\n", str[i]);
+}
+void delk(char *str[SCOUNT], int &count, int k)
+{
+	if (count < k)
+		k = count;
+	for (int i = 0; i < k; ++i)
+		delete str[i];
+	for (int i = 0; i < count - k; ++i)
+		str[i] = str[k + i];
+	count -= k;
+}
 int main(int argc, char const *argv[])
 {
 	int count = 0; // задаем начальное количество
@@ -76,5 +101,28 @@ int main(int argc, char const *argv[])
 		delete p[i].name;	// удаляем из кучи выделенные строки
 	}
 	delete [] p;	// затем структуры
+
+	char *str[SCOUNT]; // обьявляем массив указателей на строки
+	int scount = 0;
+	fillstr(str, scount, "first"); //выделяем память и заполянем строки
+	fillstr(str, scount, "second");
+	fillstr(str, scount, "third");
+	fillstr(str, scount, "fourth");
+	fillstr(str, scount, "fifth");
+	fillstr(str, scount, "sixth");
+	fillstr(str, scount, "seventh");
+	fillstr(str, scount, "eighth");
+	fillstr(str, scount, "ninth");
+	fillstr(str, scount, "tenth");
+	printf("\nSource:\n");
+	printstr(str, scount); // вывод строк на печать
+	printf("\nInput k: ");
+	int k;
+	scanf("%d", &k); // ввести с клавиатуры k
+	delk(str, scount, k); // удалить k строк из начала массива
+	printf("\nResult:\n");
+	printstr(str, scount); // вывод строк на печать
+	for (int i = 0; i < scount; ++i)
+		delete str[i]; // освобождаем память
 	return 0;
 }
