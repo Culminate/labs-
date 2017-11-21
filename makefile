@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp -o main.exe
+	g++ lab4.cpp -o lab4.exe
