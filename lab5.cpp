@@ -6,6 +6,8 @@
 using namespace std;
 
 #define SIZE 10
+#define ROWS 8
+#define COLS 8
 // вывод массива в окно консоли
 void printarr(int * arr, int size)
 {
@@ -17,6 +19,7 @@ void fillarr(int *arr, int size)
 {
 	for(int *p = arr; (p - arr) < size; p++) *p = rand()%19-9;
 }
+// удалить элементы с нечетными индексами
 void deleteodd(int **parr, int &size)
 {
 	int *arr = *parr;
@@ -30,18 +33,55 @@ void deleteodd(int **parr, int &size)
 		*(*parr + i) = *(arr + i);	// переносим в него все данные
 	delete [] arr; // удаляем старый
 }
+// добавить К столбцов в начало массива
+void addkcols(int **parr, int rows, int &cols, int k)
+{
+	for (int i = 0; i < rows; ++i)
+	{
+		int *p = new int[cols + k]; // выделяем новый массив
+		fillarr(p, k);	// заполняем первые к столбцов случайными числами
+		for (int j = k; j < cols + k; ++j)
+			*(p + j) = *(*(parr + i) + j - k); // переносим оставшиеся стобцы в новый массив
+		delete *(parr + i); // удаляем старый массив
+		*(parr + i) = p; // на его место ставим новый
+	}
+	cols += k;	// инкрементируем счетчик столбцов
+}
+
 int main(int argc, char const *argv[])
 {
-	int *a = new int[SIZE], size = SIZE; // объявляем перемменную размера и массив
+	int *arr = new int[SIZE], size = SIZE; // объявляем перемменную размера и массив
 	srand(time(0)); // иницилизируем генератор случайных чисел
-	fillarr(a, size); // заполняем массив случайными числами
+	fillarr(arr, size); // заполняем массив случайными числами
     printf("Source:\n");
-	printarr(a, size); // выводим массив
-	deleteodd(&a, size);
+	printarr(arr, size); // выводим массив
+	deleteodd(&arr, size); // удаляем элементы с нечетными индексами
 	printf("\nResult:\n");
-	printarr(a, size); // выводим массив
-	delete [] a; // удаляем массив
+	printarr(arr, size); // выводим массив
+	delete [] arr; // удаляем массив
+	//обьявляем 2 мерный массив и его размеры
+	int **tarr = new int*[ROWS], cols = COLS, rows = ROWS;
+	for (int i = 0; i < ROWS; ++i)
+		*(tarr + i) = new int[COLS]; // обьявляем колнки массива
+	printf("\nSource:\n");
+	for (int i = 0; i < rows; ++i)
+	{
+		fillarr(*(tarr + i), cols); // заполняем 2 мерный массив случайными числами
+		printarr(*(tarr + i), cols); // выводим 2 мерный массив
+	}
 
+	int k;
+	printf("\nInput k: ");
+	scanf("%d", &k); // вводим k
 
+	addkcols(tarr, rows, cols, k); // добавляем к столбцов в начало массива
+
+	printf("\nResult:\n");
+	for (int i = 0; i < rows; ++i)
+		printarr(*(tarr + i), cols); // выводим 2 мерный массив
+
+	for (int i = 0; i < rows; ++i)
+		delete *(tarr + i); // удаляем колонки массива
+	delete [] tarr;	// удаляем строки массива
 	return 0;
 }
